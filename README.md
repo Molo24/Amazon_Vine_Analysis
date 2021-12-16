@@ -21,9 +21,12 @@ The ETL process resulted in the creation of 4 tables using the Amazon review dat
 ![vine_table](https://user-images.githubusercontent.com/89284280/146303052-4378e234-543b-42ab-b36f-c74fd2833d8f.JPG)
 
 ![write_tables_to_RDS](https://user-images.githubusercontent.com/89284280/146303059-cb31a069-f5b5-4172-90fc-853a2472a473.JPG)
+<br>
+<br>
 
 ### Reviews Analysis
-From the Vine Table found on RDS, it will then be read back in to a PySpark DataFrame:
+Read back in the Vine Table found on RDS into a PySpark DataFrame:
+
 ![vine_table_read_in](https://user-images.githubusercontent.com/89284280/146303294-fb596197-dad1-41eb-a495-95e81de3627e.JPG)
 
 Next, the goal was to arrive at a final data frame whereby Vine and non-Vine reviews were grouped separately to determine which group gave more favorable reviews. To get there, a series of new dataframes were created:<br>
@@ -86,5 +89,13 @@ From the analysis, we can see the following:
   - non-Vine: 38.70%
 
 ![summary_results](https://user-images.githubusercontent.com/89284280/146304909-bdc91663-6a63-4439-8e7a-be80af08af14.JPG)
+<br>
+<br>
 
+## Summary
+In order to gauage bias, a simple measure of comparing the rate of 5-star reviews was looked at. This process assumes that if one reviewer group provided more 5-star reviews as a percentage of all reviews given by that group, this would indicate a positive bias in that group's reviews.
+
+We can see from the above analysis that the Vine reviewers were about 13% more likely to provide a 5-star review for every review given compared to the non-Vine group.
+
+Besides looking at the star rating itself, another way to gauge the validity of the review is to look at the "Helpful Percentage". In other words, was was the rate of which consumers found the provided review helpful. The assumption here, the more helpful the review the better the review. Another analysis that should be looked at in the future is which group, Vine v non-Vine, typically leaves the msot helpful reviews.
 
