@@ -66,6 +66,7 @@ results_df = spark.createDataFrame(
 ```
 - Format the Summary DataFrame:
 ```
+import pyspark.sql.functions as F
 results_df = results_df.withColumn('Total Reviews (#)', F.format_number('Total Reviews', 0))
 results_df = results_df.withColumn('Total 5-Star Reviews (#)', F.format_number('Total 5-Star Reviews', 0))
 results_df = results_df.withColumn('5-Star Rate (%)', F.format_number('5-Star Rate', 2))
