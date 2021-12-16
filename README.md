@@ -3,14 +3,14 @@
 ## Overview
 Amazon Vine is a service which allows Goods Providers to receive reviews for their products. After paying a fee, Goods Providers provide products to Amazon Vine members who then publish reviews of the product. The purpose of the below analysis was to investiage Amazon Reviews data (both Vine and non-Vine reviews) of video games sold on Amazon to determine if there is a bias in the Vine reviews compared to the non-Vine reviews. 
 
-To perform the described analysis, the selected [Video_Games_v1_00](https://s3.amazonaws.com/amazon-reviews-pds/tsv/index.txt) dataset underwent an ETL process utilizing PySpark with the Extracted and Transformed data being Loaded onto an AWS RDS Postgres instance (a Postgres schema was also created via SQL). Following the ETL process, PySpark was used to determine if there was any bias toward favorable reviews from Vine members.
+To perform the described analysis, the selected [Video_Games_v1_00](https://s3.amazonaws.com/amazon-reviews-pds/tsv/index.txt) dataset underwent an ETL process utilizing PySpark with the Extracted and Transformed data being Loaded onto an AWS RDS Postgres instance (a Postgres schema was also created via SQL). Following the ETL process, PySpark was used to determine if there was any favorable review bias found between the Vine v non-Vine reviewers. Bias was determined by looking at the percentage of 5-star reviews that were given between each group.
 
 #### Tools Used
 Tools used for this analysis: Google Colab (PySpark, ETL and bias analysis), pgAdmin (creation of SQL database and schema), Amazon Web Servies (RDS instance for Postgres database).
 
 ## Analysis
 ### ETL Process
-The ETL process resulted in the creation of 4 tables using the Amazon review dataset. These 4 tables were then written to the RDS instance.
+The ETL process resulted in the creation of 4 tables using the Amazon Video Game reviews dataset. These 4 tables were then written to the RDS instance.
 
 ![customers_table](https://user-images.githubusercontent.com/89284280/146303021-f976cc7b-6722-48bb-984b-ded8db9b21d8.JPG)
 
@@ -29,7 +29,7 @@ Read back in the Vine Table found on RDS into a PySpark DataFrame:
 
 ![vine_table_read_in](https://user-images.githubusercontent.com/89284280/146303294-fb596197-dad1-41eb-a495-95e81de3627e.JPG)
 
-Next, the goal was to arrive at a final data frame whereby Vine and non-Vine reviews were grouped separately to determine which group gave more favorable reviews. To get there, a series of new dataframes were created:<br>
+Next, the goal was to arrive at a final data frame whereby Vine and non-Vine reviews were grouped separately to determine which group gave more favorable reviews. To get there, a series of new dataframes was created:<br>
 - DataFrame of only Vine reviews:
 ```
 vine_reviews_y_df = vine_vote_perc_updated_df.filter(vine_vote_perc_updated_df.vine == 'Y')
@@ -46,13 +46,13 @@ total_paid_reviews = vine_reviews_y_df.count()
 total_non_paid_reviews = vine_reviews_n_df.count()
 ```
 
-- Determine total 5-star reviews Vine v non-Vine:
+- Determine total 5-Star reviews Vine v non-Vine:
 ```
 five_star_paid_reviews = vine_reviews_y_df.filter(vine_reviews_n_df.star_rating == 5).count()
 five_star_non_paid_reviews = vine_reviews_n_df.filter(vine_reviews_n_df.star_rating == 5).count()
 ```
 
-- Determine 5-Star rate (5) between Vine v non-Vine reviewers:
+- Determine 5-Star rate (%) between Vine v non-Vine reviewers:
 ```
 paid_5_star_rate = ((five_star_paid_reviews / total_paid_reviews)*100)
 non_paid_5_star_rate = ((five_star_non_paid_reviews / total_non_paid_reviews)*100)
@@ -97,5 +97,5 @@ In order to gauage bias, a simple measure of comparing the rate of 5-star review
 
 We can see from the above analysis that the Vine reviewers were about 13% more likely to provide a 5-star review for every review given compared to the non-Vine group.
 
-Besides looking at the star rating itself, another way to gauge the validity of the review is to look at the "Helpful Percentage". In other words, was was the rate of which consumers found the provided review helpful. The assumption here, the more helpful the review the better the review. Another analysis that should be looked at in the future is which group, Vine v non-Vine, typically leaves the msot helpful reviews.
+Besides looking at the star rating itself, another way to gauge the validity of the review is to look at the "Helpful Percentage". In other words, do consumers find the provided review helpful? The assumption here is, the more helpful the review the better the review. Another analysis that should be performed in the future is looking at which group, Vine v non-Vine, typically leaves the most helpful reviews.
 
